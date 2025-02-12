@@ -19,5 +19,7 @@ all:
             mode: 0640
         service: unbound
         fwsvc: dns
+        unbound_options: "-v"
         test_programs:
+          - unbound-control-setup
           - unbound-checkconf

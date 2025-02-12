@@ -2,6 +2,7 @@
 - name: make sure required software is installed
   hosts: all
   become: yes
+  gather_facts: no
   tasks:
     - name: ensure the software is there
       yum:
@@ -11,6 +12,7 @@
 - name: deploy corresponding dns service and configuration
   hosts: dnsservers,caching_ns
   become: yes
+  gather_facts: no
   tasks:
     - name: process any templates and publish them
       template:
@@ -21,8 +23,9 @@
         mode: "{{ item.mode }}"
       notify:
         - test configuration validity
-        - reload or restart the service
+        - restart the service
       loop: "{{ configs }}"
+      when: configs is defined
 
     - name: deploy the static files as well
       copy:
@@ -33,6 +36,7 @@
         mode: "{{ item.mode }}"
       notify: them handlerz
       loop: "{{ staticfiles }}"
+      when: staticfiles is defined
 
     - name: execute handlers if necessary
       meta: flush_handlers

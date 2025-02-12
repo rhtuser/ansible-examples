@@ -1,0 +1,10 @@
+$TTL 600
+@ IN SOA serverd.lab.example.com. root.example.com. 2025021201 3H 15M 1W 60
+  IN NS serverb.lab.example.com.
+  IN NS serverc.lab.example.com.
+
+servera IN A 192.168.0.10
+serverb IN A 192.168.0.11
+serverc IN A 192.168.0.12
+serverd IN A 192.168.0.13
+
