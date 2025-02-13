@@ -1,9 +1,9 @@
 ---
 - name: ensure the software is there
-  # TODO: what does yum think about an empty list as the name parameter?
+  become: true
   yum:
     name: "{{ packages }}"
-    state: latest
+    state: present
 
 - name: process any templates and publish them
   template:
@@ -34,14 +34,14 @@
   service:
     name: "{{ service }}"
     state: started
-    enabled: yes
+    enabled: true
   when: service != None
 
 - name: ensure firewall is open for the service
   firewalld:
     service: "{{ fwsvc }}"
     state: enabled
-    immediate: yes
-    permanent: yes
+    immediate: true
+    permanent: true
   when: fwsvc != None
 ...

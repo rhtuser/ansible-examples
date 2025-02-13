@@ -1,5 +1,8 @@
 ---
 galaxy_info:
+  role_name: deploystuff
+  namespace: myroles
+
   author: Grega Bremec <gbremec@redhat.com>
   description: this is a generic deploy-anything role
   company: Red Hat
