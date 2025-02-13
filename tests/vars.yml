@@ -1,0 +1,6 @@
+packages:
+  - httpd
+test_programs:
+  - apachectl configtest
+service: httpd
+fwsvc: http
