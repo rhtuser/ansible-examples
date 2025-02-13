@@ -6,6 +6,7 @@
     state: present
 
 - name: process any templates and publish them
+  become: true
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -18,6 +19,7 @@
   loop: "{{ configs }}"
 
 - name: deploy the static files as well
+  become: true
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -31,6 +33,7 @@
   meta: flush_handlers
 
 - name: ensure the service is started and enabled to start automatically
+  become: true
   service:
     name: "{{ service }}"
     state: started
@@ -38,6 +41,7 @@
   when: service != None
 
 - name: ensure firewall is open for the service
+  become: true
   firewalld:
     service: "{{ fwsvc }}"
     state: enabled
