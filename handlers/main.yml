@@ -1,0 +1,13 @@
+---
+- name: test configuration validity
+  listen: them handlerz
+  command: "{{ item }}"
+  changed_when: false
+  loop: "{{ test_programs }}"
+
+- name: restart the service
+  listen: them handlerz
+  service:
+    name: "{{ service }}"
+    state: restarted
+...
