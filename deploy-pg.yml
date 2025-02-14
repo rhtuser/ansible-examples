@@ -1,0 +1,124 @@
+---
+- name: ensure a postgresql server is running and correctly configured
+  hosts: dbservers
+  gather_facts: no
+  vars:
+    pg_admin_pass: verysecret
+  tasks:
+    - name: check whether package is installed
+      command: rpm -q postgresql-server
+      ignore_errors: yes
+      changed_when: false
+      register: pg_is_there
+
+    - name: check whether PG_VERSION exists in datadir
+      become: yes
+      stat:
+        path: /var/lib/pgsql/data/PG_VERSION
+      register: pg_version_is_there
+
+    - name: stop the server if this was going to be an upgrade
+      become: true
+      service:
+        name: postgresql
+        state: stopped
+      when:
+        - not pg_is_there.failed
+        - pg_version_is_there.stat.exists
+
+    - name: ensure the server is at latest version
+      become: true
+      yum:
+        name:
+          - postgresql-server
+          - python3-psycopg2
+        state: latest
+      register: install_status
+
+    - name: decide what option to use for postgresql-setup
+      set_fact:
+        pgsetup: --initdb
+      when: >
+        (install_status.changed and pg_is_there.failed)
+        or
+        not pg_version_is_there.stat.exists
+
+    - name: decide what option to use for postgresql-setup
+      set_fact:
+        pgsetup: --upgrade
+      when:
+        - install_status.changed
+        - not pg_is_there.failed
+
+    - name: initialise or upgrade the database
+      become: yes
+      command: postgresql-setup {{ pgsetup }}
+      when: pgsetup is defined
+
+    - name: ensure the service is started
+      become: yes
+      service:
+        name: postgresql
+        state: started
+
+    - name: open ports if necessary
+      become: yes
+      firewalld:
+        service: postgresql
+        state: enabled
+        immediate: yes
+        permanent: yes
+
+    - name: ensure md5 authentication is configured for remote users (ipv4)
+      become: yes
+      become_user: postgres
+      lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regex: '^host\s+all\s+all\s+0\.0\.0\.0/0\s+'
+        line: "host  all  all 0.0.0.0/0  md5"
+      notify: reload postgres
+
+    - name: ensure md5 authentication is configured for remote users (ipv6)
+      become: yes
+      become_user: postgres
+      lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regex: '^host\s+all\s+all\s+::/0\s+'
+        line: "host  all  all ::/0  md5"
+      notify: reload postgres
+
+    - name: ensure the server is listening on all interfaces
+      become: yes
+      become_user: postgres
+      lineinfile:
+        path: /var/lib/pgsql/data/postgresql.conf
+        regex: '^#?listen_addresses\s.*'
+        line: "listen_addresses '*'"
+      notify: restart postgres
+
+    - name: flush handlers
+      meta: flush_handlers
+
+    - name: ensure an admin user exists
+      become: yes
+      become_user: postgres
+      postgresql_user:
+        name: admin
+        password: "{{ pg_admin_pass }}"
+        state: present
+        login_unix_socket: "/var/run/postgresql"
+        role_attr_flags: SUPERUSER
+
+  handlers:
+    - name: reload postgres
+      become: yes
+      service:
+        name: postgresql
+        state: reloaded
+
+    - name: restart postgres
+      become: yes
+      service:
+        name: postgresql
+        state: restarted
+...
