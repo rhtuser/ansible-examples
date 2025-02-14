@@ -17,15 +17,6 @@
         path: /var/lib/pgsql/data/PG_VERSION
       register: pg_version_is_there
 
-    - name: stop the server if this was going to be an upgrade
-      become: true
-      service:
-        name: postgresql
-        state: stopped
-      when:
-        - not pg_is_there.failed
-        - pg_version_is_there.stat.exists
-
     - name: ensure the server is at latest version
       become: true
       yum:
@@ -34,6 +25,16 @@
           - python3-psycopg2
         state: latest
       register: install_status
+
+    - name: stop the server if this was an upgrade
+      become: true
+      service:
+        name: postgresql
+        state: stopped
+      when:
+        - not pg_is_there.failed
+        - pg_version_is_there.stat.exists
+        - install_status.changed
 
     - name: decide what option to use for postgresql-setup
       set_fact:
