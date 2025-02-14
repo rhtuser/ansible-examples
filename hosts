@@ -1,0 +1,7 @@
+[servers]
+servera.lab.example.com
+serverb.lab.example.com
+serverc.lab.example.com
+serverd.lab.example.com
+bastion.lab.example.com ansible_user=root
+workstation.lab.example.com

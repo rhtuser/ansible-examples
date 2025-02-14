@@ -1,0 +1,23 @@
+---
+- name: bogus
+  hosts: servers
+  gather_facts: no
+  #order: shuffle
+  max_fail_percentage: 34%
+  serial:
+    - 50%
+    - 100%
+  tasks:
+    - name: create a directory /tmp/foo
+      file:
+        path: /tmp/foo
+        state: absent
+
+#    - name: just pretend
+#      #run_once: yes
+#      command: sleep 1
+#      changed_when: false
+
+    - name: pretend some more
+      command: echo foo
+      changed_when: false

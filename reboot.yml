@@ -1,0 +1,45 @@
+---
+- name: reboot a machine
+  #hosts: serverd.lab.example.com
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: reboot
+      command: sleep 30
+      changed_when: false
+      async: 125
+      poll: 0
+      register: long_runner
+
+#    - name: reboot
+#      delegate_to: serverd.lab.example.com
+#      become: yes
+#      reboot:
+#        reboot_timeout: 30
+
+    - name: do some jiggawagoo
+      command: sleep 3
+
+    - debug: var=long_runner
+
+    - name: check if the long-running task completed yet
+      async_status:
+        jid: "{{ long_runner.ansible_job_id }}"
+      register: long_check
+      until: long_check.finished
+      delay: 5
+      retries: 20
+
+#    - name: now wait for serverd to complete before continuing
+#      delegate_to: serverd.lab.example.com
+#      wait_for:
+#        port: 22
+#        delay: 30
+
+#    - name: get uptime
+#      delegate_to: serverd.lab.example.com
+#      command: uptime
+#      register: uptime
+
+#    - debug: var=uptime
+
