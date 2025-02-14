@@ -1,0 +1,12 @@
+
+packages:
+  - bind
+  - bind-utils
+configs:
+  - src: named.conf.j2
+    dest: /etc/named.conf
+    owner: named
+    group: named
+    mode: 0640
+service: bind
+fwsvc: dns
