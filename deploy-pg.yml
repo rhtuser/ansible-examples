@@ -10,12 +10,16 @@
       ignore_errors: yes
       changed_when: false
       register: pg_is_there
+      tags:
+        - install
 
     - name: check whether PG_VERSION exists in datadir
       become: yes
       stat:
         path: /var/lib/pgsql/data/PG_VERSION
       register: pg_version_is_there
+      tags:
+        - install
 
     - name: ensure the server is at latest version
       become: true
@@ -25,6 +29,8 @@
           - python3-psycopg2
         state: latest
       register: install_status
+      tags:
+        - install
 
     - name: stop the server if this was an upgrade
       become: true
@@ -35,6 +41,8 @@
         - not pg_is_there.failed
         - pg_version_is_there.stat.exists
         - install_status.changed
+      tags:
+        - install
 
     - name: decide what option to use for postgresql-setup
       set_fact:
@@ -43,6 +51,8 @@
         (install_status.changed and pg_is_there.failed)
         or
         not pg_version_is_there.stat.exists
+      tags:
+        - install
 
     - name: decide what option to use for postgresql-setup
       set_fact:
@@ -50,17 +60,23 @@
       when:
         - install_status.changed
         - not pg_is_there.failed
+      tags:
+        - install
 
     - name: initialise or upgrade the database
       become: yes
       command: postgresql-setup {{ pgsetup }}
       when: pgsetup is defined
+      tags:
+        - install
 
     - name: ensure the service is started
       become: yes
       service:
         name: postgresql
         state: started
+      tags:
+        - config
 
     - name: open ports if necessary
       become: yes
@@ -69,6 +85,8 @@
         state: enabled
         immediate: yes
         permanent: yes
+      tags:
+        - config
 
     - name: ensure md5 authentication is configured for remote users (ipv4)
       become: yes
@@ -78,6 +96,8 @@
         regex: '^host\s+all\s+all\s+0\.0\.0\.0/0\s+'
         line: "host  all  all 0.0.0.0/0  md5"
       notify: reload postgres
+      tags:
+        - config
 
     - name: ensure md5 authentication is configured for remote users (ipv6)
       become: yes
@@ -87,6 +107,8 @@
         regex: '^host\s+all\s+all\s+::/0\s+'
         line: "host  all  all ::/0  md5"
       notify: reload postgres
+      tags:
+        - config
 
     - name: ensure the server is listening on all interfaces
       become: yes
@@ -96,6 +118,8 @@
         regex: '^#?listen_addresses\s.*'
         line: "listen_addresses '*'"
       notify: restart postgres
+      tags:
+        - config
 
     - name: flush handlers
       meta: flush_handlers
@@ -109,6 +133,37 @@
         state: present
         login_unix_socket: "/var/run/postgresql"
         role_attr_flags: SUPERUSER
+      tags:
+        - config
+
+    - name: ensure the driver is installed on client machine
+      become: true
+      delegate_to: workstation.lab.example.com
+      yum:
+        name:
+          - python3-psycopg2
+        state: latest
+      tags:
+        - test
+        - never
+
+    - name: test the connection works
+      delegate_to: workstation.lab.example.com
+      postgresql_ping:
+        login_host: "{{ inventory_hostname }}"
+        login_user: admin
+        login_password: "{{ pg_admin_pass }}"
+        db: postgres
+      register: ping_result
+      tags:
+        - test
+        - never
+
+    - assert:
+        that: ping_result.is_available
+      tags:
+        - test
+        - never
 
   handlers:
     - name: reload postgres
@@ -122,4 +177,5 @@
       service:
         name: postgresql
         state: restarted
+
 ...
