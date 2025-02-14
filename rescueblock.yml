@@ -1,0 +1,27 @@
+---
+- name: perform rollback in case of errrors
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - block:
+        - name: doing something
+          debug:
+            msg: hello
+
+        - name: fail
+          fail:
+          register: outcome
+
+        - name: this never happens
+          debug:
+            msg: i am never executed :(
+
+      rescue:
+        - name: recover from failure
+          debug:
+            msg: failure recovery
+
+      always:
+        - name: this always runs, regardless of outcome
+          debug:
+            msg: i am always executed :)

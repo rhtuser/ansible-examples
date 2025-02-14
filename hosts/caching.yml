@@ -1,0 +1,25 @@
+all:
+  children:
+    caching_ns:
+      hosts:
+        servera.lab.example.com:
+      vars:
+        packages:
+          - unbound
+        configs:
+          - src: unbound.conf.j2
+            dest: /etc/unbound/unbound.conf
+            owner: root
+            group: root
+            mode: 0640
+          - src: unbound-sysconf.j2
+            dest: /etc/sysconfig/unbound
+            owner: root
+            group: root
+            mode: 0640
+        service: unbound
+        fwsvc: dns
+        unbound_options: "-v"
+        test_programs:
+          - unbound-control-setup
+          - unbound-checkconf

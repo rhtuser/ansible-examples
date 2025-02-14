@@ -1,0 +1,29 @@
+---
+- name: use deploystuff role to ensure dns services are deployed
+  hosts: all
+
+  tasks:
+    - name: deploy motd (in task 1)
+      become: true
+      copy:
+        src: files/motd
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0444
+
+    - name: apply role here
+      include_role:
+        defaults_from: rhel.yml
+        handlers_from: rhel.yml
+        tasks_from: mycustomprocess.yml
+        role: myroles.deploystuff
+
+    - name: deploy motd (in task 2)
+      become: true
+      copy:
+        src: files/motd
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0444

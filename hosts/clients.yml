@@ -1,0 +1,7 @@
+all:
+  children:
+    dnsclients:
+      hosts:
+        workstation.lab.example.com:
+          packages:
+            - bind-utils

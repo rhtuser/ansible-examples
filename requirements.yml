@@ -1,0 +1,5 @@
+---
+roles:
+  - name: myroles.deploystuff
+    src: http://bastion.lab.example.com/deploystuff-1.0.0.tgz
+

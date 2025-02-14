@@ -1,0 +1,36 @@
+all:
+  children:
+    dnsservers:
+      children:
+        primary:
+          hosts:
+            serverd.lab.example.com:
+              staticfiles:
+                - src: int.example.com.zone
+                  dest: /var/named/int.example.com.zone
+                  owner: named
+                  group: named
+                  mode: 0640
+          vars:
+            test_programs:
+              - named-checkconf
+              - named-checkzone int.example.com.zone /var/named/int.example.com.zone
+        secondary:
+          hosts:
+            serverb.lab.example.com:
+            serverc.lab.example.com:
+          vars:
+            test_programs:
+              - named-checkconf
+      vars:
+        packages:
+          - bind
+          - bind-utils
+        configs:
+          - src: named.conf.j2
+            dest: /etc/named.conf
+            owner: named
+            group: named
+            mode: 0640
+        service: named
+        fwsvc: dns

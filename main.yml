@@ -1,0 +1,17 @@
+---
+- name: master playbook
+  hosts: localhost
+  tasks:
+    - name: announce
+      pause:
+        prompt: Deploying Foo across infrastructure.
+        seconds: 0
+
+- name: run the first step
+  import_playbook: getfact.yml
+  vars:
+    foo: bar
+
+- name: run second step
+  import_playbook: rescueblock.yml
+
