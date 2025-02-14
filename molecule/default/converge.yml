@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include myroles.deploystuff"
-      include_role:
-        name: "myroles.deploystuff"
