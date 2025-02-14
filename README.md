@@ -1,4 +1,4 @@
-== Ansible Examples ==
+## Ansible Examples
 
 This Git repository contains a couple of branches that showcase some of the key principles in designing and developing playbooks and roles.
 
