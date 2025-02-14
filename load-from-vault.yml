@@ -1,0 +1,14 @@
+---
+- name: display variables foo and bar
+  vars_files:
+    - secretstore.yml
+    - topsecretstore.yml
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: show what foo is set to
+      debug: var=foo
+
+    - name: show what bar is set to
+      debug: var=bar
+
