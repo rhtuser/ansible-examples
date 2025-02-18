@@ -19,7 +19,7 @@ Enjoy!
 For developing and testing using any recent combination of tools, a python
 virtual environment is probably the easiest choice.
 
-1. Create and activate a virtual environment:
+* Create and activate a virtual environment:
 
 ```bash
 $ python3 -mvenv ./molecule
@@ -28,7 +28,7 @@ $ source ../molecule/bin/activate
 (molecule) $
 ```
 
-2. Install `ansible-core`, `molecule` and its plugins, and the linting tools:
+* Install `ansible-core`, `molecule` and its plugins, and the linting tools:
 
 ```bash
 (molecule) $ pip3 install --upgrade pip molecule-plugins[podman,containers] yamllint ansible-lint
@@ -36,7 +36,7 @@ $ source ../molecule/bin/activate
 Successfully installed ... ansible-core-2.18.2 ... molecule-25.2.0 molecule-plugins-23.7.0 ...
 ```
 
-3. _optional_ If working on Mac or Windows, ensure your Podman VM is started
+* _optional_ If working on Mac or Windows, ensure your Podman VM is started
 
 ```bash
 (molecule) $ podman machine start
@@ -69,6 +69,7 @@ Enter the working copy and switch to a branch you want to work on.
 
 ```bash
 (molecule) $ cd ansible-examples
+
 (molecule) $ git branch -l --remote
   origin/HEAD -> origin/main
   origin/main
@@ -77,6 +78,7 @@ Enter the working copy and switch to a branch you want to work on.
   origin/parallelism
   origin/standard-playbook
   origin/standard-role
+
 (molecule) $ git checkout misc
 branch 'misc' set up to track 'origin/misc'.
 Switched to a new branch 'misc'
