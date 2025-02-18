@@ -6,22 +6,11 @@ More information on the settings and ideas demonstrated is available in each bra
 
 The branches are:
 
-`standard-playbook`
-: A standard UNIX service (configurable via text files) deployment playbook.
-: This playbook really deploys three services on four nodes: an `unbound` caching nameserver, a primary `bind` service, and two secondary `bind` DNS servers, and configures them.
-
-`standard-role`
-: The above playbook, converted into a generic role that can be used to deploy any standard UNIX service.
-: This also integrates with `molecule` and has some test playbooks (and an inventory) in the role's `tests/` directory (including a change rollback playbook).
-
-`nonstandard-playbook`
-: A simple playbook for a non-standard service, requiring the use of service-specific modules.
-
-`parallelism`
-: A couple of playbooks showcasing serialisation, asynchronous execution, and other parallelisation techniques.
-
-`misc`
-: These are some of the demos that have not been classified yet, or are too small to have a branch of their own.
+* `standard-playbook` - A standard UNIX service (configurable via text files) deployment playbook. This playbook really deploys three services on four nodes: an `unbound` caching nameserver, a primary `bind` service, and two secondary `bind` DNS servers, and configures them.
+* `standard-role` - The above playbook, converted into a generic role that can be used to deploy any standard UNIX service. This also integrates with `molecule` and has some test playbooks (and an inventory) in the role's `tests/` directory (including a change rollback playbook).
+* `nonstandard-playbook` - A simple playbook for a non-standard service, requiring the use of service-specific modules.
+* `parallelism` - A couple of playbooks showcasing serialisation, asynchronous execution, and other parallelisation techniques.
+* `misc` - These are some of the demos that have not been classified yet, or are too small to have a branch of their own.
 
 Enjoy!
 
