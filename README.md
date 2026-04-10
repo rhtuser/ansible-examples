@@ -106,6 +106,7 @@ Create a new Podman network and note its IP range.
 ```bash
 (molecule) $ podman network create ansible
 ansible
+
 (molecule) $ podman network inspect ansible
 [
      {
